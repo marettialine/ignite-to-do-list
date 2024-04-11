@@ -1,0 +1,30 @@
+.tasksStatus{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tasksStatus .status{
+    font-size: 0.875rem;
+    font-weight: bold;
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    color: var(--blue-300);
+}
+.tasksStatus .status:last-child{
+    color: var(--purple-300);
+}
+
+.tasksStatus .status span{
+    background-color: var(--gray-400);
+
+    color: var(--white);
+    font-size: 0.75rem;
+
+    padding: 0.125rem 0.5rem;
+
+    border-radius: 999px;
+}

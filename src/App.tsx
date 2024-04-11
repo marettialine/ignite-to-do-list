@@ -1,34 +1,84 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './global.css'
+import styles from './App.module.css'
+import { Header } from './components/Header'
+import { TasksList } from './components/TasksList'
+import { useEffect, useState } from 'react'
+import { TaskType } from './components/Task'
+import { TasksStatus } from './components/TasksStatus'
+import { NoTaskAlert } from './components/NoTaskAlert'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [taskList, setTaskList] = useState<TaskType[]>()
+
+  useEffect(() => {
+    const localTaskList = localStorage.getItem('ignite-feed-tasklist')
+
+    localTaskList && setTaskList(JSON.parse(localTaskList))
+  }, [setTaskList])
+
+  function addNewTask(newTask: TaskType) {
+    let newTaskList
+    const newTaskWithDate = { ...newTask, createdAt: new Date() }
+
+    if (taskList) {
+      newTaskList = [...taskList, newTaskWithDate]
+    } else {
+      newTaskList = [newTaskWithDate]
+    }
+
+    localStorage.setItem('ignite-feed-tasklist', JSON.stringify(newTaskList))
+
+    setTaskList(newTaskList)
+  }
+
+  function changeTaskCheck(newTaskCheckStatus: TaskType) {
+    const newTaskList = taskList?.filter(
+      (task) => task.taskContent !== newTaskCheckStatus.taskContent,
+    )
+
+    if (newTaskList) {
+      setTaskList([...newTaskList, newTaskCheckStatus])
+
+      localStorage.setItem(
+        'ignite-feed-tasklist',
+        JSON.stringify([...newTaskList, newTaskCheckStatus]),
+      )
+    }
+  }
+
+  function deleteTask(taskToDelete: TaskType) {
+    const tasksWithoutTaskToDelete = taskList?.filter(
+      (task: TaskType) => task !== taskToDelete,
+    )
+
+    if (tasksWithoutTaskToDelete) {
+      setTaskList(tasksWithoutTaskToDelete)
+
+      localStorage.setItem(
+        'ignite-feed-tasklist',
+        JSON.stringify(tasksWithoutTaskToDelete),
+      )
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className={styles.wrapper}>
+      <Header addNewTask={addNewTask} taskList={taskList || []} />
+
+      <div className={styles.container}>
+        <TasksStatus taskList={taskList || []} />
+
+        {taskList ? (
+          <TasksList
+            taskList={taskList}
+            changeTaskCheck={changeTaskCheck}
+            deleteTask={deleteTask}
+          />
+        ) : (
+          <NoTaskAlert />
+        )}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
