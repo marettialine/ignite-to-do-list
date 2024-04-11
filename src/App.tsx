@@ -8,7 +8,7 @@ import { TasksStatus } from './components/TasksStatus'
 import { NoTaskAlert } from './components/NoTaskAlert'
 
 function App() {
-  const [taskList, setTaskList] = useState<TaskType[]>()
+  const [taskList, setTaskList] = useState<TaskType[]>([])
 
   useEffect(() => {
     const localTaskList = localStorage.getItem('ignite-feed-tasklist')
