@@ -68,7 +68,7 @@ function App() {
       <div className={styles.container}>
         <TasksStatus taskList={taskList || []} />
 
-        {taskList ? (
+        {taskList.length > 0 ? (
           <TasksList
             taskList={taskList}
             changeTaskCheck={changeTaskCheck}
